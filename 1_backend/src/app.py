@@ -48,13 +48,13 @@ from response_spec import (
     SubsectorListResponse,
     SubsectorResponse,
 )
-from response_synthesizer import ResponseSynthesizerService
+from response_synthesizer_api import ResponseSynthesizerService
 from starlette.background import BackgroundTask
 
 from sub_question_generator import SubQuestionGenerator
 from utils import User, extract_user
-import logging
-_logger = logging.getLogger("backend:app")
+from logger import create_logger
+_logger = create_logger("backend:app")
 
 
 
@@ -368,7 +368,7 @@ async def post_message(
             _logger.debug(f"Streaming response for conversation {id}...")
             # This is the message ID of the user's message
             # Will be used for cancelling the streaming or retrying
-
+            model_response_wrapper
             for token in model_response:
                 tokens.append(token)
                 yield token
@@ -498,14 +498,15 @@ async def post_message(
         #     except Exception as exc:
         #         _logger.exception(f"Failed to store citations in the DB: {str(exc)}")
 
-        final_answer = response_synthesizer.get_final_answer(
+        final_answer = await response_synthesizer.get_final_answer(
             query=message.prompt,
             params=rs_params,
             qa_pairs=qa_pairs,
             sources=source_nodes,
         )
-        _logger.info("Streaming response from synthesizer...")
-        return StreamingResponse(model_response_wrapper(final_answer))
+        
+        _logger.info(f"Streaming response from synthesizer {final_answer}")
+        return final_answer
 
     except HTTPException as exc:
         # await prisma.message.update(where={"id": bot_message.id}, data={"text": f"Error: {exc}"})

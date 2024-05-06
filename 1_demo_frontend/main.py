@@ -1,4 +1,4 @@
-import openai
+import os
 from PIL import Image
 import streamlit as st
 import time
@@ -14,7 +14,7 @@ st.set_page_config(
     layout="wide",
 )
 
-
+RAWDATAPATH = "temp"
 
 tab1, tab2 = st.tabs(["Smart Assistant", "Document Analyzer"])
 
@@ -34,7 +34,20 @@ def add_bg_from_local(image_file):
     unsafe_allow_html=True
     )
    
+def save_uploadedfile(uploadedfile):
+    global RAWDATAPATH
+    with open(os.path.join(RAWDATAPATH, uploadedfile.name), "wb") as f:
 
+        f.write(uploadedfile.getbuffer())
+
+        with st.spinner(text="Cargando . . ."):
+            time.sleep(3)
+
+    file_route = os.path.join(RAWDATAPATH, uploadedfile.name)
+
+    print(file_route)
+
+    return file_route
 
 
 with st.sidebar:
@@ -48,6 +61,9 @@ with st.sidebar:
 
 if "messages" not in st.session_state:
     st.session_state.messages = [{"role": "assistant", "content": "I'm Erick. How can I help you?"}]
+if "files" not in st.session_state:
+    st.session_state.files = []
+
 
 with tab1:
     st.title("Erick")
@@ -55,6 +71,16 @@ with tab1:
         with st.chat_message(message["role"]):
             st.markdown(message["content"])
 
+with tab2:
+    st.header("Share your Files")
+    input_file = st.file_uploader("Upload a your files", accept_multiple_files=False)
+    if st.button("Upload"):
+        if input_file is not None and input_file not in st.session_state.files:
+            input_files = save_uploadedfile(input_file)
+            st.write(f"File is uploaded in {input_files}")
+            st.session_state.files.append(input_file.name)
+        else:
+            st.write(f"File {input_file.name} is alredy uploaded")      
 
 if prompt := st.chat_input("What is up?"):
     st.session_state.messages.append({"role": "user", "content": prompt})
@@ -68,13 +94,8 @@ if prompt := st.chat_input("What is up?"):
             message_placeholder = st.empty()
             full_response = ""
             # Simulate stream of response with milliseconds delay
-            with requests.post('http://127.0.0.1:8000/api/conversation/1234/message', stream=True, json={"prompt":prompt}) as r:
-                for chunk in r.iter_content(10):
-                    #get content in response
-                    print(chunk)
-                    full_response += chunk.decode("utf-8")
-                # Add a blinking cursor to simulate typing
-                    message_placeholder.markdown(full_response + "▌")
-                message_placeholder.markdown(full_response)
+            response = requests.post('http://127.0.0.1:8000/api/conversation/1234/message', json={"prompt":prompt})
+            full_response = response.json()["data"]["response"]
+            message_placeholder.markdown(full_response)
         # Add assistant response to chat history
         st.session_state.messages.append({"role": "assistant", "content": full_response})
