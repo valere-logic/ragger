@@ -1,21 +1,18 @@
 version: '3'
 
 services:
-  mysql:
-    image: mysql:8.0
-    restart: always
+  backend:
+    image: 1_backend:latest
     ports:
-      - "3306:3306"
+      - 8000:8000
     environment:
-      MYSQL_DATABASE: "epgptech"
-      MYSQL_ROOT_PASSWORD: "password"
-    volumes:
-      - ./data:/docker-entrypoint-initdb.d
-      - ep-volume:/var/lib/mysql
-    healthcheck:
-      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
-      timeout: 30s
-      retries: 10
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+  response_synthesyzer:
+    image: 3_response_synthesizer_api:latest
+    ports:
+      - 5050:5050
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
   db:
     image: postgres:14.1-alpine
     restart: always
