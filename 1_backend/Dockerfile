@@ -22,5 +22,4 @@ RUN mkdir /app/attachments
 # Start the executable
 WORKDIR /app/src
 EXPOSE 8000
-RUN chmod u+x startup.sh
-CMD ["/bin/bash", "startup.sh"]
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
