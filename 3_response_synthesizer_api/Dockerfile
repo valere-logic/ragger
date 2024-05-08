@@ -18,5 +18,5 @@ ENV PYTHONPATH=/app/gen_deps:/app/src:/app/gen_deps/response_synthesizer_proto:/
 
 # Start the executable
 WORKDIR /app
-EXPOSE 5006
-CMD ["uvicorn", "src/main:app", "--host", "0.0.0.0", "--port", "80"]
+EXPOSE 5050
+CMD ["uvicorn", "src/main:app", "--host", "0.0.0.0", "--port", "5050"]
