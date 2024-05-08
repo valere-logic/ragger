@@ -11,7 +11,6 @@ RUN pip3 install -r ./requirements/prod.txt
 # Create non-root user to run as.
 # RUN useradd -m app -u 1001
 # Copy the dependencies
-COPY ./Makefile ./Makefile
 COPY ./src ./src
 COPY ./gen_deps ./gen_deps
 
@@ -20,4 +19,4 @@ ENV PYTHONPATH=/app/gen_deps:/app/src:/app/gen_deps/response_synthesizer_proto:/
 # Start the executable
 WORKDIR /app
 EXPOSE 5006
-CMD ["/bin/bash", "src/startup.sh"]
+CMD ["uvicorn", "src/main:app", "--host", "0.0.0.0", "--port", "80"]
