@@ -49,11 +49,6 @@ resource "aws_instance" "app_server" {
         volume_size = 30
     }  
 
-    provisioner "file" {
-        source      = "./../docker-compose.yml"
-        destination = "/app/docker-compose.yml"
-    }
-
     key_name = "connection"
     security_groups =  ["launch-wizard-2"]
 }
