@@ -3,6 +3,7 @@ name: Deploy to ECR
 
 on:
   workflow_dispatch
+
 jobs:
   build:
     name: Build Image
