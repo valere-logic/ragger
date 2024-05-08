@@ -2,12 +2,7 @@
 name: Deploy to ECR
 
 on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
+  workflow_dispatch
 
 jobs:
   build:
@@ -50,7 +45,7 @@ jobs:
             IMAGE_TAG: Lasted
         run: |
             echo "image-syn=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
-            docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./app/3_response_synthesizer
+            docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./app/3_response_synthesizer_api
             docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           
       - name: install terraform
