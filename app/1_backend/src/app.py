@@ -9,9 +9,7 @@ from tempfile import SpooledTemporaryFile
 from typing import Annotated
 
 import variables as vars
-from attachment_proto.attachment_pb2 import Attachment, AttachmentDeletionMessage
-from db.client.client import Prisma
-from db.client.errors import RecordNotFoundError
+
 from fastapi import (
     APIRouter,
     BackgroundTasks,
