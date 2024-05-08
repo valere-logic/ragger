@@ -17,6 +17,6 @@ COPY ./gen_deps ./gen_deps
 ENV PYTHONPATH=/app/gen_deps:/app/src:/app/gen_deps/response_synthesizer_proto:/app/gen_deps/attachment_proto:/app/gen_deps/storage:/app/gen_deps/rabbitmq/app/gen_deps/cache
 
 # Start the executable
-WORKDIR /app
+WORKDIR /app/src
 EXPOSE 5050
-CMD ["uvicorn", "src/main:app", "--host", "0.0.0.0", "--port", "5050"]
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "5050"]
