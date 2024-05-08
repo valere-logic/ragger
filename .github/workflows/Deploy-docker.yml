@@ -30,28 +30,28 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
 
-      - name: Build backend, tag, and push image to Amazon ECR
-        id: build-image-backend
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: ragger-backend
-          IMAGE_TAG: Lasted
-        run: |
-          echo "image-backend=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
-          echo "image-url=$ECR_REGISTRY/$ECR_REPOSITORY" >> $GITHUB_OUTPUT
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./app/1_backend
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-
-      - name: Build synthesizer, tag, and push image to Amazon ECR
-        id: build-image-synthesizer
-        env:
-            ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-            ECR_REPOSITORY: ragger-synthesizer
-            IMAGE_TAG: Lasted
-        run: |
-            echo "image-syn=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
-            docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./app/3_response_synthesizer
-            docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+      #- name: Build backend, tag, and push image to Amazon ECR
+      #  id: build-image-backend
+      #  env:
+      #    ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+      #    ECR_REPOSITORY: ragger-backend
+      #    IMAGE_TAG: Lasted
+      #  run: |
+      #    echo "image-backend=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
+      #    echo "image-url=$ECR_REGISTRY/$ECR_REPOSITORY" >> $GITHUB_OUTPUT
+      #    docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./app/1_backend
+      #    docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+#
+      #- name: Build synthesizer, tag, and push image to Amazon ECR
+      #  id: build-image-synthesizer
+      #  env:
+      #      ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+      #      ECR_REPOSITORY: ragger-synthesizer
+      #      IMAGE_TAG: Lasted
+      #  run: |
+      #      echo "image-syn=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
+      #      docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./app/3_response_synthesizer
+      #      docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           
       - name: install terraform
         run: |
@@ -68,4 +68,4 @@ jobs:
         run: |
             echo init terrafom and apply
             cd infra
-            terraform apply -auto-approve -var "docker_url_images=${{ steps.build-image-backend.outputs.image-url }}" -var "docker_image_backend=${{ steps.build-image-backend.outputs.image-backend }}" -var "docker_image_syn=${{ steps.build-image-synthesizer.outputs.image-syn }}" -var "aws_access_key=${{ secrets.AWS_ACCESS_KEY_ID }}" -var "aws_secret_key=${{ secrets.AWS_SECRET_ACCESS_KEY }}" -var "password_ec2=${{ secrets.SSH_KEY }}" -var "repository_name=${{ github.repository }}"
+            terraform apply -auto-approve -var "docker_url_images=590183966112.dkr.ecr.us-east-1.amazonaws.com" -var "docker_image_backend=590183966112.dkr.ecr.us-east-1.amazonaws.com/ragger-backend:Lasted" -var "docker_image_syn=590183966112.dkr.ecr.us-east-1.amazonaws.com/ragger-synthesizer:Lasted" -var "aws_access_key=${{ secrets.AWS_ACCESS_KEY_ID }}" -var "aws_secret_key=${{ secrets.AWS_SECRET_ACCESS_KEY }}" -var "password_ec2=${{ secrets.SSH_KEY }}" -var "repository_name=${{ github.repository }}"
