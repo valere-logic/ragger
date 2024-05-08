@@ -26,13 +26,6 @@ generate_deps:
 	@mkdir -p $(OUT_DIR)
 	cp -r $(COMMON_DIR)/* $(OUT_DIR)
 
-	@mkdir -p $(DB_OUT_DIR)
-	cd ../2_database && make all
-	cp -r ../2_database/gen_dist/* $(DB_OUT_DIR)
-
-	@mkdir -p $(ATTACHMENT_OUT_DIR)
-	cd ../1_attachment_proto && make all
-	cp -r ../1_attachment_proto/gen_dist/* $(ATTACHMENT_OUT_DIR)
 
 	@mkdir -p $(INDEX_BUILDER_OUT_DIR)
 	cd ../3_index_builder && make generate_deps
