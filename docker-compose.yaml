@@ -1,18 +1,16 @@
-version: '3'
-
 services:
   backend:
     image: 1_backend:latest
     ports:
       - 8000:8000
     environment:
-      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}
   response_synthesyzer:
     image: 3_response_synthesizer_api:latest
     ports:
       - 5050:5050
     environment:
-      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}
   db:
     image: postgres:14.1-alpine
     restart: always
