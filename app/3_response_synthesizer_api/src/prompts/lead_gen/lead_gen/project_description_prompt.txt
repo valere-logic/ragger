@@ -1,0 +1,4 @@
+The following text is a requirement for a job posting:
+{project_requirement}
+Generate an output with a structured breakdown of the job posting as a json with thee parameters that follows:
+{json_output_str}

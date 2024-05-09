@@ -8,7 +8,7 @@ from fastapi.responses import JSONResponse
 
 
 
-from routes.response_synthesizer import (
+from routes.response_synthesizer_route import (
     init_response_synthesizer_router
 )
 

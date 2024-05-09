@@ -5,25 +5,25 @@ from fastapi.encoders import jsonable_encoder
 from starlette import status
 from starlette.responses import JSONResponse
 
-from response_synthesizer import Config, ResponseSynthesizer
+from lead_generator import Config, ResponseSynthesizer
 
 
-from models.response_synthesizer import QueryRequest, QueryResponse
+from models.lead_generator import QueryRequest, QueryResponse
 
-RESPONSE_SYNTHESIZER_TAG = "response_synthesyzer"
+lead_generator_TAG = "lead_generator"
 
-def init_response_synthesizer_router():
+def init_lead_generator_router():
     """
     Price conversion router which holds endpoints to return a price data from database
     """
-    response_synthesizer_router = APIRouter()
+    lead_generator_router = APIRouter()
 
     response_synthesyzer_service = ResponseSynthesizer()
 
-    @response_synthesizer_router.get(
+    @lead_generator_router.get(
         "/response/chat/{conversion_id}",
         response_model=QueryResponse,
-        tags=[RESPONSE_SYNTHESIZER_TAG],
+        tags=[lead_generator_TAG],
     )
     async def synthesize(
         conversion_id: str,
@@ -36,4 +36,4 @@ def init_response_synthesizer_router():
         
         return QueryResponse(conversation_id=conversion_id, response=response.response)
     
-    return response_synthesizer_router
+    return lead_generator_router
