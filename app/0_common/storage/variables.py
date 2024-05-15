@@ -9,8 +9,27 @@ if BUILD_ENV is True:
         os.environ.setdefault(env_var, "{}")
 
 
+STORAGE_ENV = os.environ.get("ENV", "GCP")
+
+
+def load_gcp_credentials():
+    return json.loads(os.environ.get("CLOUD_STORAGE_CREDENTIALS"))
+
+def load_aws_credentials():
+    return {
+        "ACCESS_KEY": os.environ.get("ACCESS_KEY"),
+        "SECRET_KEY": os.environ.get("SECRET_KEY"),
+        "SESSION_TOKEN":os.environ.get("SESSION_TOKEN"),
+    }
+
+CREDENTIALS_OPTIONS = {
+    "GCP": load_gcp_credentials,
+    "AWS": load_aws_credentials
+}
+
+ENV = os.environ.get("ENV", "AWS")
+
 try:
-    ENV = os.environ.get("ENV", "GCP")
-    CREDENTIALS = json.loads(os.environ.get("CLOUD_STORAGE_CREDENTIALS"))
+    CREDENTIALS = CREDENTIALS_OPTIONS[ENV]()
 except KeyError:
-    raise EnvironmentError("Missing environment variable: CLOUD_STORAGE_CREDENTIALS")
+    raise EnvironmentError("Missing Storage variable", extra={"storage_service": ENV})
