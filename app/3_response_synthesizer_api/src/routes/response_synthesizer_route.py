@@ -5,7 +5,7 @@ from fastapi.encoders import jsonable_encoder
 from starlette import status
 from starlette.responses import JSONResponse
 
-from response_synthesizer import Config, ResponseSynthesizer
+from services.response_synthesizer_service import Config, ResponseSynthesizer
 
 
 from models.response_synthesizer_models import QueryRequest, QueryResponse

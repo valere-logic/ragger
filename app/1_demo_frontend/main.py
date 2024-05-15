@@ -34,18 +34,24 @@ def add_bg_from_local(image_file):
     unsafe_allow_html=True
     )
    
-def save_uploadedfile(uploadedfile):
+def save_uploadedfiles(uploadedfiles, state):
     global RAWDATAPATH
-    with open(os.path.join(RAWDATAPATH, uploadedfile.name), "wb") as f:
+    file_route = []
+    for file in uploadedfiles:
+        filename = os.path.join(RAWDATAPATH, file.name)
+        if filename not in state:
+            with open(filename, "wb") as f:
 
-        f.write(uploadedfile.getbuffer())
+                f.write(file.getbuffer())
 
-        with st.spinner(text="Cargando . . ."):
-            time.sleep(3)
+                with st.spinner(text="Loading . . ."):
+                    time.sleep(3)
+            st.write(f"File is uploaded in {filename}")
+            file_route.append(filename)
+        else:
+            st.write(f"File {file.name} is alredy uploaded") 
 
-    file_route = os.path.join(RAWDATAPATH, uploadedfile.name)
-
-    print(file_route)
+    
 
     return file_route
 
@@ -73,14 +79,13 @@ with tab1:
 
 with tab2:
     st.header("Share your Files")
-    input_file = st.file_uploader("Upload a your files", accept_multiple_files=False)
+    input_files = st.file_uploader("Upload a your files", accept_multiple_files=True)
     if st.button("Upload"):
-        if input_file is not None and input_file not in st.session_state.files:
-            input_files = save_uploadedfile(input_file)
-            st.write(f"File is uploaded in {input_files}")
-            st.session_state.files.append(input_file.name)
-        else:
-            st.write(f"File {input_file.name} is alredy uploaded")      
+        print(input_files)
+        files_state = st.session_state.files
+        uploaded_files = save_uploadedfiles(input_files, files_state)
+        st.session_state.files.extend(uploaded_files)
+             
 
 if prompt := st.chat_input("What is up?"):
     st.session_state.messages.append({"role": "user", "content": prompt})
@@ -94,7 +99,7 @@ if prompt := st.chat_input("What is up?"):
             message_placeholder = st.empty()
             full_response = ""
             # Simulate stream of response with milliseconds delay
-            response = requests.post('http://127.0.0.1:8000/api/conversation/1234/message', json={"prompt":prompt})
+            response = requests.post('http://52.90.22.153:8000/api/conversation/1234/message', json={"prompt":prompt})
             full_response = response.json()["data"]["response"]
             message_placeholder.markdown(full_response)
         # Add assistant response to chat history
