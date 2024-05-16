@@ -13,8 +13,7 @@ from llama_index.prompts.prompt_type import PromptType
 from llama_index.schema import NodeWithScore, QueryBundle, TextNode
 from llm_utils import Config
 
-from logger import create_logger
-
+from gen_deps.logger import create_logger
 
 _logger = create_logger("response_synthesizer:model")
 
@@ -48,9 +47,7 @@ class ResponseSynthesizer(object):
             response_mode="simple_summarize",
             text_qa_template=self.prompt_template,
         )
-        
 
-        
         retriever = VectorIndexRetriever(
             index=self.index,
             similarity_top_k=2,

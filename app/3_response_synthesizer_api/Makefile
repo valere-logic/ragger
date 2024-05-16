@@ -27,6 +27,8 @@ generate_deps: all
 # Run the server locally.
 run: 
 	export PYTHONPATH=$(PYTHONPATH) && gunicorn -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:5050 src.main:app
+run/vector: 
+	export PYTHONPATH=$(PYTHONPATH) && cd src/vector_stores && python -m basic_vector_store
 run/background:
 	export PYTHONPATH=$(PYTHONPATH) && cd src && python indexing_task.py
 test: 
