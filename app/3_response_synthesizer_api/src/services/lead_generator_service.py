@@ -11,6 +11,7 @@ from llama_index.embeddings import HuggingFaceEmbedding
 from llama_index.prompts.base import PromptTemplate
 from llama_index.prompts.prompt_type import PromptType
 from llama_index.schema import NodeWithScore, QueryBundle, TextNode
+from vector_stores.lead_gen.lead_gen_vector_store import get_vector_store, LeadGenVectorStore
 from llm_utils import Config
 
 from gen_deps.logger import create_logger
@@ -30,8 +31,7 @@ class LeadGenerator(object):
         callback_handler = OpenInferenceCallbackHandler()
         self.callback_manager = CallbackManager([llama_debug, callback_handler])
         self.embed_model = HuggingFaceEmbedding(model_name=vars.EMBEDDING_MODEL)
-        self.documents = SimpleDirectoryReader(vars.CUR_DIR, required_exts=['.txt']).load_data()
-        self.index = VectorStoreIndex.from_documents(self.documents)
+        self.vector_store: LeadGenVectorStore = get_vector_store()
         _logger.info("Response Synthesizer initilized")
 
     def _create_nodes(self, qa_pairs):
@@ -48,22 +48,19 @@ class LeadGenerator(object):
             response_mode="no_text",
             text_qa_template=self.prompt_template,
         )
+        nodes = []
+        for name, retriever in self.vector_store.retrievers.items():
+            nodes.append(retriever["retriever"].vector_retriever.retrieve())
          
-        retriever = VectorIndexRetriever(
-            index=self.index,
-            similarity_top_k=vars.SIMILARITY_TOP_K,
-        )
-        self._query_engine = RetrieverQueryEngine(
-            retriever=retriever,
-            response_synthesizer=self.summarizer)
         
-        streamer = self._query_engine.query(
-            self.query_str
+        streamer = self.synthesize(
+            self.query_str,
+            nodes
         )
         return streamer
     
 
-    def initialize_synthesizer(self, query, qa_pairs):
+    def initialize_synthesizer(self, query):
         self.query_str = query
         self.query = QueryBundle(query_str=query)
         _logger.info(f"Request: {query} ")
@@ -71,11 +68,10 @@ class LeadGenerator(object):
         return self._create_instance()
 
 
-    def synthesize(self):
-        _logger.info(f"Synthesizing answer: {self.query_str}")
+    def synthesize(self, query, nodes):
+        _logger.info(f"Synthesizing answer: {query.query_str}")
         response = self.summarizer.synthesize(
-            query=self.query,
-            nodes=self.nodes,
-            additional_source_nodes=self.additional_source_nodes,
+            query=query,
+            nodes=nodes
         )
         return response

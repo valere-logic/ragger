@@ -1,4 +1,5 @@
 import psycopg2
+from psycopg2.errors import UndefinedTable
 from llama_index import ServiceContext, VectorStoreIndex, StorageContext
 from llama_index.indices.vector_store.retrievers.retriever import VectorIndexRetriever
 from llama_index.indices.vector_store.retrievers.auto_retriever import (
@@ -61,14 +62,16 @@ class VectorStore:
                     message = ("CloudSQL auth proxy required for to use RAG locally. If installed, run "
                                "'./cloud-sql-proxy sitch-core:us-west2:core-beta' from the terminal. If not installed"
                                " yet, see: https://cloud.google.com/sql/docs/postgres/connect-instance-auth-proxy")
+                    if type(e) == UndefinedTable:
+                        return value
                     raise type(e)(message)
 
 
 class VectorRetriever:
 
-    def __init__(self, store_type: str):
+    def __init__(self, store_type: str, embedding_table_name: str = "test"):
         self.service_context = ServiceContext.from_defaults(llm=OpenAI(model="gpt-4"))
-        self.vector_store = VectorStore(store_type=store_type, embed_dim=1536)
+        self.vector_store = VectorStore(store_type=store_type, embed_dim=1536, embedding_table_name=embedding_table_name)
         self.vector_store_info = None
         self.vector_retriever = None
         self.index = None

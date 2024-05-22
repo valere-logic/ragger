@@ -12,6 +12,7 @@ from llama_index.prompts.base import PromptTemplate
 from llama_index.prompts.prompt_type import PromptType
 from llama_index.schema import NodeWithScore, QueryBundle, TextNode
 from llm_utils import Config
+from vector_stores.basic_vector_store import get_vector_store
 
 from gen_deps.logger import create_logger
 
@@ -29,8 +30,7 @@ class ResponseSynthesizer(object):
         callback_handler = OpenInferenceCallbackHandler()
         self.callback_manager = CallbackManager([llama_debug, callback_handler])
         self.embed_model = HuggingFaceEmbedding(model_name=vars.EMBEDDING_MODEL)
-        self.documents = SimpleDirectoryReader(vars.CUR_DIR, required_exts=['.txt']).load_data()
-        self.index = VectorStoreIndex.from_documents(self.documents)
+        self.vector_store = get_vector_store()
         _logger.info("Response Synthesizer initilized")
 
     def _create_nodes(self, qa_pairs):
@@ -46,19 +46,17 @@ class ResponseSynthesizer(object):
         self.summarizer = get_response_synthesizer(
             response_mode="simple_summarize",
             text_qa_template=self.prompt_template,
+            service_context=self.vector_store.service_context
         )
 
-        retriever = VectorIndexRetriever(
-            index=self.index,
-            similarity_top_k=2,
-        )
         self._query_engine = RetrieverQueryEngine(
-            retriever=retriever,
+            retriever=self.vector_store.vector_retriever,
             response_synthesizer=self.summarizer)
         
         streamer = self._query_engine.query(
             self.query_str
         )
+        print(streamer.source_nodes)
         return streamer
     
 
