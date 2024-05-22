@@ -9,8 +9,10 @@ from fastapi.responses import JSONResponse
 
 
 from routes.response_synthesizer_route import (
-    init_response_synthesizer_router
+    init_response_synthesizer_router,
+    
 )
+from routes.lead_generator_route import init_lead_generator_router
 
 import config as env_config
 
@@ -52,6 +54,7 @@ def _init_routes(app: FastAPI):
     This function will initialize all endpoint routers.
     """
     app.include_router(init_response_synthesizer_router())
+    app.include_router(init_lead_generator_router())
 
 
 def _init_errors_handlers(app: FastAPI):

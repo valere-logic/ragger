@@ -8,7 +8,9 @@ warnings.simplefilter("ignore", category=LangChainDeprecationWarning)
 import pandas as pd
 
 
-from llama_index import VectorStoreIndex, StorageContext
+from llama_index import VectorStoreIndex, StorageContext, ServiceContext
+from llama_index.llms.openai import OpenAI
+
 
 from framework.vector_store import VectorRetriever
 from vector_stores.node_parser import csv_parse_nodes

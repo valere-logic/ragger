@@ -26,7 +26,7 @@ generate_deps: all
 
 # Run the server locally.
 run: 
-	export PYTHONPATH=$(PYTHONPATH) && gunicorn -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:5050 src.main:app
+	export PYTHONPATH=$(PYTHONPATH) && gunicorn -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:5050 src.main:app --timeout 90
 run/vector: 
 	export PYTHONPATH=$(PYTHONPATH) && cd src/vector_stores/lead_gen && python -m lead_gen_vector_store
 run/background:

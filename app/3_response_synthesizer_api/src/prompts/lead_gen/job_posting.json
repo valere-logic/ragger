@@ -35,9 +35,7 @@
         "Documentation detailing the architecture, technologies used, and a guide for integrating with other systems.",
         "Source code with appropriate comments and a clear structure."
       ],
-      "timeline": {
-        "total_project_duration": "4 weeks"
-      },
+      "total_project_duration": "4 weeks",
       "selection_criteria": [
         "Previous experience with virtual try-on technologies or similar AR projects.",
         "Portfolio of past projects that includes work with real-time video processing.",
