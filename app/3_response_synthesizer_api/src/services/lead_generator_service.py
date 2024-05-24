@@ -33,9 +33,17 @@ class LeadGenerator(object):
             project_description_prompt = file.read() 
         with open(Path(CUR_DIR, "prompts", "lead_gen","job_posting.json")) as file:
             job_posting_str = json.dumps(json.loads(file.read()), indent=2)
-
+        with open(Path(CUR_DIR, "prompts", "lead_gen", "lead_gen_prompt.txt")) as file:
+            lead_gen_prompt = file.read()
+        with open(Path(CUR_DIR, "prompts", "lead_gen", "lead_gen.json")) as file:
+            lead_gen_str = file.read() 
+        with open(Path(CUR_DIR, "prompts", "lead_gen", "projects_gen_prompt.txt")) as file:
+            context_str = file.read() 
         self.project_description_template = Template(project_description_prompt)
         self.job_posting_str = job_posting_str
+        self.lead_gen_str = lead_gen_str
+        self.context_str = Template(context_str)
+        self.lead_gen_prompt = Template(lead_gen_prompt)
         self.context_length = vars.CONTEXT_WINDOW
         llama_debug = LlamaDebugHandler(print_trace_on_end=True)
         callback_handler = OpenInferenceCallbackHandler()
@@ -55,20 +63,17 @@ class LeadGenerator(object):
 
     # update parameters
     def _create_instance(self):
-        prompt_template = PromptTemplate(
-            self.lead_prompt_template, prompt_type=PromptType.QUESTION_ANSWER
-        )
-        self.summarizer = get_response_synthesizer(
-            response_mode="no_text",
-            text_qa_template=prompt_template,
-        )
+  
         nodes = []
         for name, retriever in self.vector_store.retrievers.items():
-            nodes.append(retriever["retriever"].vector_retriever.retrieve())
-         
+            nodes.extend(retriever["retriever"].vector_retriever.retrieve(self.job_description))
+            print(name, len(nodes))
+        node_str = json.dumps([node.get_text() for node in nodes])
+        print(node_str)
+        self.query_str += self.context_str.substitute(nodes=node_str)
         streamer = self.synthesize(
             self.query_str,
-            nodes
+            []
         )
         return streamer
     
@@ -94,6 +99,27 @@ class LeadGenerator(object):
         
 
         return self._create_job_description_instance()
+    
+    def generate_proposal(
+            self, 
+            job_description,
+            deliverables,
+            total_project_duration,
+            selection_criteria,
+            proposal_requirements,
+            ):
+        self.job_description = job_description
+    
+        self.query_str = self.lead_gen_prompt.substitute(
+            job_description=job_description,
+            lead_gen_json_str=self.lead_gen_str,
+            deliverables=deliverables,
+            total_project_duration=total_project_duration,
+            proposal_requirements=proposal_requirements
+        )
+        
+        
+        return self._create_instance()
 
     def synthesize(self, query, nodes):
         _logger.info(f"Synthesizing answer")
@@ -105,6 +131,5 @@ class LeadGenerator(object):
             
         else:
             response = self.llm.complete(query).text
-            print(response)
 
         return response

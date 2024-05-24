@@ -27,7 +27,7 @@ def init_lead_generator_router():
         response_model=JobPostingResponse
     )
     async def describe(
-        conversion_id: str,
+        conversation_id: str,
         job_posting_request: JobPostingRequest = Depends(),
       
     ):
@@ -45,22 +45,31 @@ def init_lead_generator_router():
 
         job_posting_info = JobPostingInfo(client_information=client_info, project_information=project_info)
         
-        return JobPostingResponse(conversation_id=conversion_id, job_posting=job_posting_info)
+        return JobPostingResponse(conversation_id=conversation_id, job_posting=job_posting_info)
     
-    # lead_generator_router.get(
-    #     "/proposal/{conversation_id}",
-    #     response_model=QueryResponse,
-    #     tags=[lead_generator_TAG],
-    # )
-    # async def propose(
-    #     conversion_id: str,
-    #     query_request: QueryRequest = Depends(),
+    @lead_generator_router.get(
+        "/proposal/{conversation_id}"
+    )
+    async def propose(
+        conversion_id: str,
+        proposal_request: ProposalRequest = Depends(),
       
-    # ):
-    #     query = query_request.query
-    #     qa_pairs = zip(query_request.question, query_request.answers)
-    #     response = response_synthesyzer_service.initialize_synthesizer(query, qa_pairs)
+    ):
+    
+        job_description = proposal_request.job_description
+        proposal_requirements = proposal_request.proposal_requirements
+        selection_criteria = proposal_request.selection_criteria
+        timeline = proposal_request.total_project_duration
+        deliverables = proposal_request.deliverables
+        response = lead_generator_service.generate_proposal(
+            job_description,
+            proposal_requirements,
+            timeline,
+            selection_criteria,
+            deliverables,
+        )
         
-    #     return QueryResponse(conversation_id=conversion_id, response=response.response)
+        
+        return json.loads(response)
     
     return lead_generator_router

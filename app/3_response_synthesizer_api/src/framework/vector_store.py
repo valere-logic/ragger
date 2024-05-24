@@ -96,7 +96,7 @@ class VectorRetriever:
         else:
             self.vector_retriever = VectorIndexRetriever(
                 index=self.index,
-                similarity_top_k=SIMILARITY_TOP_K,
+                similarity_top_k=4,
                 verbose=True,
                 filters=[],
             )

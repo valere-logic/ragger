@@ -16,6 +16,7 @@ USE_GPU = os.getenv("USE_GPU", "false").lower() == "true"
 PORT = os.environ.get("PORT", 5006)
 TEXT_FINAL_PROMPT_TMPL = "{context_str}" "---" "{query_str}"
 
+
 DEBUG = os.environ.get("DEBUG", "false").lower() == "true"
 NO_OF_WORKERS = os.getenv("NO_OF_WORKERS", 2 if DEBUG else 4)
 
