@@ -53,6 +53,7 @@ class ProposalRequest(BaseModel):
     selection_criteria: List[str] =  Field(Query([]))
     proposal_requirements: List[str] = Field(Query([]))
 
+
 class ProposalResponse(BaseModel):
     conversation_id: str
     response: str

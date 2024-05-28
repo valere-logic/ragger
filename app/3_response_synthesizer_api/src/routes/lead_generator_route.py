@@ -22,13 +22,13 @@ def init_lead_generator_router():
 
     lead_generator_service = LeadGenerator()
 
-    @lead_generator_router.get(
+    @lead_generator_router.post(
         "/description/{conversation_id}",
         response_model=JobPostingResponse
     )
     async def describe(
         conversation_id: str,
-        job_posting_request: JobPostingRequest = Depends(),
+        job_posting_request: JobPostingRequest,
       
     ):
         job_posting = job_posting_request.job_posting
@@ -47,12 +47,12 @@ def init_lead_generator_router():
         
         return JobPostingResponse(conversation_id=conversation_id, job_posting=job_posting_info)
     
-    @lead_generator_router.get(
+    @lead_generator_router.post(
         "/proposal/{conversation_id}"
     )
     async def propose(
-        conversion_id: str,
-        proposal_request: ProposalRequest = Depends(),
+        conversation_id: str,
+        proposal_request: ProposalRequest,
       
     ):
     
