@@ -1,26 +1,27 @@
 services:
-  backend:
-    image: 1_backend:latest
-    ports:
-      - 8000:8000
-    environment:
-      - OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}
+  # backend:
+  #   image: 1_backend:latest
+  #   ports:
+  #     - 8000:8000
+  #   environment:
+  #     - OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}
   response_synthesyzer:
     image: 3_response_synthesizer_api:latest
     ports:
       - 5050:5050
     environment:
-      - OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}
-  db:
-    image: postgres:14.1-alpine
-    restart: always
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-    ports:
-      - '5432:5432'
-    volumes: 
-      - db:/var/lib/postgresql/data
+      - OPENAI_API_KEY=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
+      - PG_CONNECTION_URL=postgresql://testuser:testpwd@pgvector:5432
+  # db:
+  #   image: postgres:14.1-alpine
+  #   restart: always
+  #   environment:
+  #     - POSTGRES_USER=postgres
+  #     - POSTGRES_PASSWORD=postgres
+  #   ports:
+  #     - '5432:5432'
+  #   volumes: 
+  #     - db:/var/lib/postgresql/data
   pgvector:
     hostname: pgvector
     image: ankane/pgvector
