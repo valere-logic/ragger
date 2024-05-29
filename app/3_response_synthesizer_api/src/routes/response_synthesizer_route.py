@@ -21,19 +21,20 @@ def init_response_synthesizer_router():
     response_synthesyzer_service = ResponseSynthesizer()
 
     @response_synthesizer_router.get(
-        "/response/chat/{conversion_id}",
+        "/response/chat/{conversation_id}",
         response_model=QueryResponse,
         tags=[RESPONSE_SYNTHESIZER_TAG],
     )
     async def synthesize(
-        conversion_id: str,
+        conversation_id: str,
         query_request: QueryRequest = Depends(),
       
     ):
         query = query_request.query
         qa_pairs = zip(query_request.question, query_request.answers)
-        response = response_synthesyzer_service.initialize_synthesizer(query, qa_pairs)
+        use_rag = query_request.store
+        response = response_synthesyzer_service.initialize_synthesizer(query, qa_pairs, use_rag)
         
-        return QueryResponse(conversation_id=conversion_id, response=response.response)
+        return QueryResponse(conversation_id=conversation_id, response=response)
     
     return response_synthesizer_router

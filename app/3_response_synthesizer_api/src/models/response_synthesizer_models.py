@@ -8,6 +8,7 @@ class QueryRequest(BaseModel):
     query: str
     question: List[str] = Field(Query([]))
     answers: List[str] =  Field(Query([]))
+    store: bool = False
 
 class QueryResponse(BaseModel):
     conversation_id: str
