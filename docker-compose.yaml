@@ -10,7 +10,7 @@ services:
     ports:
       - 5050:5050
     environment:
-      - OPENAI_API_KEY=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
+      - OPENAI_API_KEY=OPENAIKEY
       - PG_CONNECTION_URL=postgresql://testuser:testpwd@pgvector:5432
   # db:
   #   image: postgres:14.1-alpine
