@@ -14,9 +14,9 @@ RUN pip3 install -r ./requirements/prod.txt
 COPY ./src ./src
 COPY ./gen_deps ./gen_deps
 
-ENV PYTHONPATH=/app/gen_deps:/app/src:/app/gen_deps/response_synthesizer_api:/app/gen_deps/attachment_proto:/app/gen_deps/storage:/app/gen_deps/rabbitmq/app/gen_deps/cache
+ENV PYTHONPATH=/app:/app/gen_deps:/app/src:/app/gen_deps/response_synthesizer_proto:/app/gen_deps/attachment_proto:/app/gen_deps/storage:/app/gen_deps/rabbitmq:/app/gen_deps/logger
 
 # Start the executable
 WORKDIR /app/src
 EXPOSE 5050
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "5050"]
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "5050", "--timeout-keep-alive", "90"]

@@ -1,10 +1,10 @@
 services:
-  backend:
-    image: 1_backend:latest
-    ports:
-      - 8000:8000
-    environment:
-      - OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}
+  # backend:
+  #   image: 1_backend:latest
+  #   ports:
+  #     - 8000:8000
+  #   environment:
+  #     - OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}
   response_synthesyzer:
     image: 3_response_synthesizer_api:latest
     ports:
